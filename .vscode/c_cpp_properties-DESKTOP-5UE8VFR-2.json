@@ -1,0 +1,72 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/include",
+                "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/src",
+                "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/DueTimer",
+                "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/LiquidCrystal",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/Wire/src",
+                "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/arduinoFFT/src",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/cores/arduino",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/libsam",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/CMSIS/CMSIS/Include",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/CMSIS/Device/ATMEL",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/variants/arduino_due_x",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/HID/src",
+                "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/SPI/src",
+                "C:/Users/Lennard/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/include",
+                    "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/src",
+                    "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/DueTimer",
+                    "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/LiquidCrystal",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/Wire/src",
+                    "c:/Users/Lennard/OneDrive - Hochschule Hannover/VSCode/Stimmgeraet/.pio/libdeps/due/arduinoFFT/src",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/cores/arduino",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/libsam",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/CMSIS/CMSIS/Include",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/system/CMSIS/Device/ATMEL",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/variants/arduino_due_x",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/HID/src",
+                    "C:/Users/Lennard/.platformio/packages/framework-arduino-sam/libraries/SPI/src",
+                    "C:/Users/Lennard/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=50100",
+                "__SAM3X8E__",
+                "ARDUINO_SAM_DUE",
+                "ARDUINO=10805",
+                "F_CPU=84000000L",
+                "USBCON",
+                "USB_VID=0x2341",
+                "USB_PID=0x003E",
+                "USB_PRODUCT=\"Arduino Due\"",
+                "USB_MANUFACTURER=\"Arduino\"",
+                "ARDUINO_ARCH_SAM",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "C:/Users/Lennard/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe",
+            "compilerArgs": [
+                "-mcpu=cortex-m3",
+                "-mthumb",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

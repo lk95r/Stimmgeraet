@@ -126,8 +126,5 @@ void loop()
   lcd.setCursor(0, 1);
   lcd.print(BaseFreq);
   Serial.print("\n");
-  delay(100); 
-  Serial.print(analogRead(2));
-  Serial.print("\n");
   delay(100); */
 }

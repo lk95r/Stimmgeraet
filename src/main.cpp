@@ -5,12 +5,18 @@
 #include "stimmen.h"
 #include <math.h>
 
-arduinoFFT FFT = arduinoFFT();
-LiquidCrystal lcd(51, 50, 40, 41, 42, 43, 10, POSITIVE);
-
-// Pin Definitionen LCD
+// Pin Definitionen
 #define AnalogIn 2
 #define CPU_CLOCK 84E6
+//LCD Pins
+#define V0_Pin 52 //Pin für Kontrast
+#define RS_Pin 50 // Register Select
+#define E_Pin 48 //Enable
+#define Data_Pin4 46 //DataPin 4bit Mode
+#define Data_Pin5 44 //DataPin 4bit Mode
+#define Data_Pin6 42 //DataPin 4bit Mode
+#define Data_Pin7 40 //DataPin 4bit Mode
+
 
 unsigned long microseconds;
 uint32_t TIMER_TICKS; // 5250, oder 5249, wenn 5250 == 8kHz ?
@@ -23,6 +29,8 @@ unsigned int sampling_period_us;
 double vReal[samples], *pt_vReal;
 double vImag[samples], *pt_vImag;
 Ton_t Ton;
+arduinoFFT FFT = arduinoFFT();
+LiquidCrystal lcd(RS_Pin, E_Pin, Data_Pin4, Data_Pin5, Data_Pin6, Data_Pin7);
 
 uint16_t maxAmplitudes = 0;
 
@@ -60,14 +68,17 @@ void setup()
   lcd.begin(16, 2);
   analogReadResolution(12);
   //sampling_period_us = round(1000000 * (1.0 / samplingFrequency));
+  /*
   Serial.begin(9600);
   while (!Serial);
   Serial.println("Ready");
+  */
   pinMode(2, INPUT);
   pt_i = &i;
   pt_vReal = &vReal[0];
   pt_vImag = &vImag[0];
   setupTimer(TC1, 1, TC4_IRQn, TIMER_TICKS);
+  analogWrite(V0_Pin,30);
 }
 
 void loop()
@@ -103,6 +114,9 @@ void loop()
   FFT.Compute(FFT_FORWARD);
   FFT.ComplexToMagnitude();   //Betragsbildung
   BaseFreq = FFT.MajorPeak(); //MaxFindung
+  Ton = Ton_gespielt(BaseFreq);
+  /*
+  //Konsolenausgabe für Debugging
   if (analogRead(2) > maxAmplitudes)
   { //Ausgabe d. Maximalen Input-Pegels
     maxAmplitudes = analogRead(2);
@@ -110,7 +124,6 @@ void loop()
     Serial.print(maxAmplitudes);
     Serial.print("\n");
   }
-  Ton = Ton_gespielt(BaseFreq);
   //Ausgabe der berechneten Frequenz
   if(Abweichung(BaseFreq,Ton,Toleranz)>0){
     Serial.println("Stimm runter");
@@ -119,12 +132,13 @@ void loop()
   Serial.print(" Ton:");
   Serial.println(Ton.ton_name);
   delay(50);
-  /*
+  */
+
   //lcd Ausgabe
   lcd.setCursor(0, 0);
-  lcd.print("Frequenz:");
-  lcd.setCursor(0, 1);
+  lcd.print("Freq:");
   lcd.print(BaseFreq);
-  Serial.print("\n");
-  delay(100); */
+  lcd.setCursor(0, 1);
+  lcd.print(Ton.ton_name);
+  delay(100); 
 }

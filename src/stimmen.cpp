@@ -1,8 +1,8 @@
 #include "stimmen.h"
 
-
 /**
 *\brief Zuordnung von Nennfrequenz und Name
+* Kann nur Frequenzen oberhalb von 39Hz zuordnen
 *
 *\param double freq_in Frequenz, die zugeordnet werden soll
 */
@@ -102,7 +102,6 @@ Ton_t Ton_gespielt(double freq_in)
 
     return T;
 }
-
 
 /**
  * \brief Stellt Abweichung zum Soll fest

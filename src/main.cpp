@@ -5,35 +5,36 @@
 #include "stimmen.h"
 #include <math.h>
 
+#define CPU_CLOCK 84E6
+
 // Pin Definitionen
 #define AnalogIn 2
-#define CPU_CLOCK 84E6
 //LCD Pins
-#define V0_Pin 52 //Pin für Kontrast
-#define RS_Pin 50 // Register Select
-#define E_Pin 48 //Enable
+#define V0_Pin 3     //Pin für Kontrast
+#define RS_Pin 50    // Register Select
+#define E_Pin 48     //Enable
 #define Data_Pin4 46 //DataPin 4bit Mode
 #define Data_Pin5 44 //DataPin 4bit Mode
 #define Data_Pin6 42 //DataPin 4bit Mode
 #define Data_Pin7 40 //DataPin 4bit Mode
 
-
-unsigned long microseconds;
-uint32_t TIMER_TICKS; // 5250, oder 5249, wenn 5250 == 8kHz ?
-double BaseFreq;
-uint16_t i = 0, *pt_i;
+//Deklaration aller nötigen Variablen
 const uint16_t samples = 512;
 const double samplingFrequency = 8000;
+uint32_t TIMER_TICKS;
+Ton_t Ton;
+double BaseFreq;
 const float Toleranz = 0.01;
-unsigned int sampling_period_us;
+float delta_f;
+uint16_t i = 0, *pt_i;
 double vReal[samples], *pt_vReal;
 double vImag[samples], *pt_vImag;
-Ton_t Ton;
+
+//Erstellen der Objekte
 arduinoFFT FFT = arduinoFFT();
 LiquidCrystal lcd(RS_Pin, E_Pin, Data_Pin4, Data_Pin5, Data_Pin6, Data_Pin7);
 
-uint16_t maxAmplitudes = 0;
-
+//Funktion zum Einrichten des Timers
 void setupTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t ticks_to_count)
 {
   pmc_set_writeprotect(false);
@@ -48,7 +49,7 @@ void setupTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t ticks_to_count
 }
 
 //Interrupt Handler
-//Eintragen der Werte in Arrays
+//Eintragen der Werte in Arrays zum Samplen
 void TC4_Handler()
 {
   TC_GetStatus(TC1, 1);
@@ -64,49 +65,33 @@ void TC4_Handler()
 
 void setup()
 {
-  TIMER_TICKS = CPU_CLOCK/(samplingFrequency*2);
-  lcd.begin(16, 2);
+  //Einrichten der Pins
   analogReadResolution(12);
-  //sampling_period_us = round(1000000 * (1.0 / samplingFrequency));
-  /*
-  Serial.begin(9600);
-  while (!Serial);
-  Serial.println("Ready");
-  */
   pinMode(2, INPUT);
+  pinMode(V0_Pin, OUTPUT);
+  analogWrite(V0_Pin, 100);
+  //Zuweisen der Pointer zum Samplen
   pt_i = &i;
   pt_vReal = &vReal[0];
   pt_vImag = &vImag[0];
+  //Timer initialisieren
+  TIMER_TICKS = CPU_CLOCK / (samplingFrequency * 2);
   setupTimer(TC1, 1, TC4_IRQn, TIMER_TICKS);
-  analogWrite(V0_Pin,30);
+  lcd.begin(16, 2);
 }
 
 void loop()
 {
   /*SAMPLING*/
-  /*
-   //mit Arduino Core
-  microseconds = micros();
-  for (int i = 0; i < samples; i++)
-  {
-    vReal[i] = analogRead(AnalogIn);
-    vImag[i] = 0;
-    
-   while (micros() - microseconds < sampling_period_us)
-    {
-      //empty loop
-    }
-    microseconds += sampling_period_us;
-  }
-    */
   //Sampling mit Timer-Interrupt
   i = 0;
   TC_Start(TC1, 1);
   while (i < samples)
   {
-    delay(1); //WARUM??
+    delay(1);
   }
   //Sampling Ende
+
   //Berechnen der FFT
   FFT = arduinoFFT(vReal, vImag, samples, samplingFrequency);
   FFT.DCRemoval();
@@ -115,30 +100,36 @@ void loop()
   FFT.ComplexToMagnitude();   //Betragsbildung
   BaseFreq = FFT.MajorPeak(); //MaxFindung
   Ton = Ton_gespielt(BaseFreq);
-  /*
-  //Konsolenausgabe für Debugging
-  if (analogRead(2) > maxAmplitudes)
-  { //Ausgabe d. Maximalen Input-Pegels
-    maxAmplitudes = analogRead(2);
-    Serial.print("\t\t\t New max:");
-    Serial.print(maxAmplitudes);
-    Serial.print("\n");
-  }
-  //Ausgabe der berechneten Frequenz
-  if(Abweichung(BaseFreq,Ton,Toleranz)>0){
-    Serial.println("Stimm runter");
-  }else if(Abweichung(BaseFreq,Ton,Toleranz)<0) Serial.println("Stimm hoch");
-  Serial.println(BaseFreq);
-  Serial.print(" Ton:");
-  Serial.println(Ton.ton_name);
-  delay(50);
-  */
+
+  //Speichern der Abweichung in Variable
+  delta_f = Abweichung(BaseFreq, Ton, Toleranz);
 
   //lcd Ausgabe
   lcd.setCursor(0, 0);
   lcd.print("Freq:");
   lcd.print(BaseFreq);
   lcd.setCursor(0, 1);
-  lcd.print(Ton.ton_name);
-  delay(100); 
+
+  if (delta_f > 0)
+  { //Ton zu hoch
+    lcd.print(" ");
+    lcd.print(Ton.ton_name);
+    lcd.setCursor(3, 1);
+    lcd.print("<");
+  }
+  else if (delta_f < 0)
+  { //Ton zu niedrig
+    lcd.print(">");
+    lcd.print(Ton.ton_name);
+    lcd.setCursor(3, 1);
+    lcd.print(" ");
+  }
+  else if (delta_f = 0)
+  { //Ton richtig, bzw in Toleranz
+    lcd.print(" ");
+    lcd.print(Ton.ton_name);
+    lcd.setCursor(3, 1);
+    lcd.print(" ");
+  }
+  delay(80);
 }

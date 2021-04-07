@@ -11,7 +11,7 @@
 #define AnalogIn 2
 //LCD Pins
 #define V0_Pin 3     //Pin für Kontrast
-#define RS_Pin 50    // Register Select
+#define RS_Pin 50    //Register Select
 #define E_Pin 48     //Enable
 #define Data_Pin4 46 //DataPin 4bit Mode
 #define Data_Pin5 44 //DataPin 4bit Mode
@@ -19,7 +19,7 @@
 #define Data_Pin7 40 //DataPin 4bit Mode
 
 //Deklaration aller nötigen Variablen
-const uint16_t samples = 512;
+const uint16_t samples = 2048;
 const double samplingFrequency = 8000;
 uint32_t TIMER_TICKS;
 Ton_t Ton;
@@ -60,6 +60,7 @@ void TC4_Handler()
     *pt_i = *pt_i + 1;
   }
   else
+    //Stoppen des Timers, wenn das Array gefüllt ist
     TC_Stop(TC1, 1);
 }
 
@@ -69,7 +70,7 @@ void setup()
   analogReadResolution(12);
   pinMode(2, INPUT);
   pinMode(V0_Pin, OUTPUT);
-  analogWrite(V0_Pin, 100);
+  analogWrite(V0_Pin, 100); 
   //Zuweisen der Pointer zum Samplen
   pt_i = &i;
   pt_vReal = &vReal[0];
@@ -77,6 +78,7 @@ void setup()
   //Timer initialisieren
   TIMER_TICKS = CPU_CLOCK / (samplingFrequency * 2);
   setupTimer(TC1, 1, TC4_IRQn, TIMER_TICKS);
+  //Kommunikation mit dem LCD starten
   lcd.begin(16, 2);
 }
 
@@ -131,5 +133,7 @@ void loop()
     lcd.setCursor(3, 1);
     lcd.print(" ");
   }
-  delay(80);
+  delay(25);
 }
+
+
